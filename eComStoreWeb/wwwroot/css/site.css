@@ -16,6 +16,9 @@ html {
 body {
   margin-bottom: 60px;
 }
-footer{
-
+.btn-create {
+    width: 150px
+}
+.btn-back {
+    width: 150px
 }
