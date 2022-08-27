@@ -17,6 +17,29 @@ namespace eComStoreWeb.Controllers
             return View(obj);
         }
         //Get
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0) return NotFound();
+
+            var objFromDb = _db.Categories.Find(id);
+
+            if (objFromDb == null) return NotFound();
+
+            return View(objFromDb);
+        }
+        [HttpPost,ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePOST(int? Id)
+        {
+            var obj = _db.Categories.Find(Id);
+
+            if (obj == null) return NotFound();
+
+            _db.Categories.Remove(obj);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        //Get
         public IActionResult Edit(int? id)
         {
             if (id == null || id == 0) return NotFound();
@@ -53,7 +76,7 @@ namespace eComStoreWeb.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category obj)
         {
-            if(obj.Name == obj.DisplayOrder.ToString())
+            if (obj.Name == obj.DisplayOrder.ToString())
             {
                 ModelState.AddModelError("name", "The Display Order cannot be the same as the Name");
             }
