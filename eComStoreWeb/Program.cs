@@ -13,7 +13,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
     ));
 //To get useSql Server you have to go to nuget package manager and manually install Package Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation. There are no suggestions
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
