@@ -1,4 +1,4 @@
-﻿using eComStore.DataAccess.Data;
+﻿using eComStore.DataAccess.Repository.IRepository;
 using eComStore.Model;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,14 +6,14 @@ namespace eComStoreWeb.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        public CategoryController(ApplicationDbContext db)
+        private readonly ICategoryRepository _db;
+        public CategoryController(ICategoryRepository db)
         {
             _db = db;
         }
         public IActionResult Index()
         {
-            IEnumerable<Category> obj = _db.Categories;
+            IEnumerable<Category> obj = _db.GetAll();
             return View(obj);
         }
         //Get
@@ -21,7 +21,7 @@ namespace eComStoreWeb.Controllers
         {
             if (id == null || id == 0) return NotFound();
 
-            var objFromDb = _db.Categories.Find(id);
+            var objFromDb = _db.GetFirstOrDefault(i => i.Id == id);
 
             if (objFromDb == null) return NotFound();
 
@@ -29,14 +29,14 @@ namespace eComStoreWeb.Controllers
         }
         [HttpPost,ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(int? Id)
+        public IActionResult DeletePOST(int? id)
         {
-            var obj = _db.Categories.Find(Id);
+            var obj = _db.GetFirstOrDefault(i => i.Id == id);
 
             if (obj == null) return NotFound();
 
-            _db.Categories.Remove(obj);
-            _db.SaveChanges();
+            _db.Remove(obj);
+            _db.Save();
             TempData["success"] = "Category deleted successfully!";
             return RedirectToAction("Index");
         }
@@ -45,7 +45,7 @@ namespace eComStoreWeb.Controllers
         {
             if (id == null || id == 0) return NotFound();
 
-            var objFromDb = _db.Categories.Find(id);
+            var objFromDb = _db.GetFirstOrDefault(i => i.Id == id);
 
             if (objFromDb == null) return NotFound();
 
@@ -61,8 +61,8 @@ namespace eComStoreWeb.Controllers
             }
             if (ModelState.IsValid)
             {
-                _db.Categories.Update(obj);
-                _db.SaveChanges();
+                _db.Update(obj);
+                _db.Save();
                 TempData["success"] = "Category updated successfully!";
                 return RedirectToAction("Index");
             }
@@ -71,7 +71,6 @@ namespace eComStoreWeb.Controllers
         //Get
         public IActionResult Create()
         {
-
             return View();
         }
         [HttpPost]
@@ -84,8 +83,8 @@ namespace eComStoreWeb.Controllers
             }
             if (ModelState.IsValid)
             {
-                _db.Categories.Add(obj);
-                _db.SaveChanges();
+                _db.Add(obj);
+                _db.Save();
                 TempData["success"] = "Category created successfully!";
                 return RedirectToAction("Index");
             }
