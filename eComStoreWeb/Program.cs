@@ -1,7 +1,15 @@
+using eComStoreWeb.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+//To get useSql Server you have to go to nuget package manager and manually install Microsoft.EntityFrameworkCore.SqlServer. There are no suggestions
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+    ));
+
 
 var app = builder.Build();
 
