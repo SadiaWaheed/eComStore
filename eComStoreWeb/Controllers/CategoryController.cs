@@ -1,5 +1,5 @@
-﻿using eComStoreWeb.Data;
-using eComStoreWeb.Models;
+﻿using eComStore.DataAccess.Data;
+using eComStore.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eComStoreWeb.Controllers

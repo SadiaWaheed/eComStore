@@ -1,4 +1,4 @@
-﻿using eComStoreWeb.Models;
+﻿using eComStore.Model;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

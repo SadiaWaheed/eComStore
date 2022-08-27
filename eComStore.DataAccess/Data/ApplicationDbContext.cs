@@ -1,7 +1,7 @@
-﻿using eComStoreWeb.Models;
+﻿using eComStore.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace eComStoreWeb.Data
+namespace eComStore.DataAccess.Data
 {
     public class ApplicationDbContext : DbContext
     {
