@@ -19,8 +19,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            IEnumerable<Product> objFromDb = _db.Product.GetAll();
-            return View(objFromDb);
+            return View();
         }
         //Get
         public IActionResult Delete(int? id)
@@ -101,5 +100,14 @@ namespace eComStore.Web.Areas.Admin.Controllers
             }
             return View(obj);
         }
+
+        #region API Calls
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var productList = _db.Product.GetAll();
+            return Json(new { data = productList });
+        }
+        #endregion
     }
 }
