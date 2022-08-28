@@ -2,8 +2,9 @@
 using eComStore.Model;
 using Microsoft.AspNetCore.Mvc;
 
-namespace eComStoreWeb.Controllers
+namespace eComStore.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _db;
@@ -27,7 +28,7 @@ namespace eComStoreWeb.Controllers
 
             return View(objFromDb);
         }
-        [HttpPost,ActionName("Delete")]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeletePOST(int? id)
         {

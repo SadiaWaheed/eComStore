@@ -2,8 +2,9 @@
 using eComStore.Model;
 using Microsoft.AspNetCore.Mvc;
 
-namespace eComStoreWeb.Controllers
+namespace eComStore.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CoverTypeController : Controller
     {
         private readonly IUnitOfWork _db;
