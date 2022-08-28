@@ -1,6 +1,8 @@
 ﻿using eComStore.DataAccess.Repository.IRepository;
 using eComStore.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace eComStore.Web.Areas.Admin.Controllers
 {
@@ -10,7 +12,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
         private readonly IUnitOfWork _db;
         public ProductController(IUnitOfWork db)
         {
-            _db= db;
+            _db = db;
         }
         public IActionResult Index()
         {
@@ -44,11 +46,23 @@ namespace eComStore.Web.Areas.Admin.Controllers
         //Get
         public IActionResult Upsert(int? id)
         {
-            
+            IEnumerable<SelectListItem> CategoryList = _db.Category.GetAll().Select(
+                i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+            IEnumerable<SelectListItem> CoverTypeList = _db.CoverType.GetAll().Select(
+               i => new SelectListItem
+               {
+                   Text = i.Name,
+                   Value = i.Id.ToString()
+               });
             if (id == null || id == 0)
             {
                 //Create New Product
-
+                ViewBag.CategoryList = CategoryList;
+                return View();
             }
             else
             {
