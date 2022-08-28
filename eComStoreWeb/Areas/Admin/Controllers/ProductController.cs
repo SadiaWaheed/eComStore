@@ -11,9 +11,11 @@ namespace eComStore.Web.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _db;
-        public ProductController(IUnitOfWork db)
+        private readonly IWebHostEnvironment _hostEnvironment;
+        public ProductController(IUnitOfWork db, IWebHostEnvironment hostEnvironment)
         {
             _db = db;
+            _hostEnvironment = hostEnvironment;
         }
         public IActionResult Index()
         {
@@ -75,13 +77,26 @@ namespace eComStore.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(Product obj, IFormFile file)
+        public IActionResult Upsert(ProductViewModel obj, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
-                _db.Product.Update(obj);
+                string rootPath = _hostEnvironment.WebRootPath;
+                if(file != null)
+                {
+                    string fileName = Guid.NewGuid().ToString();
+                    var uploads = Path.Combine(rootPath, @"images\products");
+                    var extension = Path.GetExtension(file.FileName);
+
+                    using(var fileStreams = new FileStream(Path.Combine(uploads,fileName+extension),FileMode.Create))
+                    {
+                        file.CopyTo(fileStreams);
+                    }
+                    obj.Product.ImageUrl = @"\images\products\" + fileName + extension;
+                }
+                _db.Product.Add(obj.Product);
                 _db.Save();
-                TempData["success"] = "Product updated successfully!";
+                TempData["success"] = "Product created successfully!";
                 return RedirectToAction("Index");
             }
             return View(obj);
