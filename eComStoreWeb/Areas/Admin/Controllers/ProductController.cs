@@ -62,6 +62,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
             {
                 //Create New Product
                 ViewBag.CategoryList = CategoryList;
+                ViewData["CoverTypeList"] =CoverTypeList;
                 return View();
             }
             else
