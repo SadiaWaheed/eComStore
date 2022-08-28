@@ -1,5 +1,6 @@
 ﻿using eComStore.DataAccess.Repository.IRepository;
 using eComStore.Model;
+using eComStore.Model.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
@@ -46,35 +47,35 @@ namespace eComStore.Web.Areas.Admin.Controllers
         //Get
         public IActionResult Upsert(int? id)
         {
-            IEnumerable<SelectListItem> CategoryList = _db.Category.GetAll().Select(
-                i => new SelectListItem
+            ProductViewModel productVM = new()
+            {
+                Product = new(),
+                CategoryList = _db.Category.GetAll().Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
-                });
-            IEnumerable<SelectListItem> CoverTypeList = _db.CoverType.GetAll().Select(
-               i => new SelectListItem
-               {
-                   Text = i.Name,
-                   Value = i.Id.ToString()
-               });
+                }),
+                CoverTypeList = _db.CoverType.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                })
+            };
             if (id == null || id == 0)
             {
                 //Create New Product
-                ViewBag.CategoryList = CategoryList;
-                ViewData["CoverTypeList"] =CoverTypeList;
-                return View();
+                return View(productVM);
             }
             else
             {
                 //Edit Existing Product
 
             }
-            return View();
+            return View(productVM);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(Product obj)
+        public IActionResult Upsert(Product obj, IFormFile file)
         {
             if (ModelState.IsValid)
             {
