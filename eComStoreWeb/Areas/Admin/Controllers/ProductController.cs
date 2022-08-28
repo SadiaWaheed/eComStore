@@ -105,7 +105,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var productList = _db.Product.GetAll();
+            var productList = _db.Product.GetAll(includeProperties: "Category");
             return Json(new { data = productList });
         }
         #endregion
