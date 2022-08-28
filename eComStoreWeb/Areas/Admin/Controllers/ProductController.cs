@@ -70,9 +70,9 @@ namespace eComStore.Web.Areas.Admin.Controllers
             else
             {
                 //Edit Existing Product
-
+                productVM.Product = _db.Product.GetFirstOrDefault(i => i.Id == id);
+                return View(productVM);
             }
-            return View(productVM);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -87,13 +87,32 @@ namespace eComStore.Web.Areas.Admin.Controllers
                     var uploads = Path.Combine(rootPath, @"images\products");
                     var extension = Path.GetExtension(file.FileName);
 
+                    if(obj.Product.ImageUrl != null)
+                    {
+                        var oldImage = Path.Combine(rootPath, obj.Product.ImageUrl.TrimStart('\\'));
+                        if(System.IO.File.Exists(oldImage))
+                        {
+                            System.IO.File.Delete(oldImage);
+                        }
+                    }
+
                     using(var fileStreams = new FileStream(Path.Combine(uploads,fileName+extension),FileMode.Create))
                     {
                         file.CopyTo(fileStreams);
                     }
                     obj.Product.ImageUrl = @"\images\products\" + fileName + extension;
+
                 }
-                _db.Product.Add(obj.Product);
+
+                if (obj.Product.Id == 0)
+                {
+                    _db.Product.Add(obj.Product);
+                }
+                else
+                {
+                    _db.Product.Update(obj.Product);
+                }
+
                 _db.Save();
                 TempData["success"] = "Product created successfully!";
                 return RedirectToAction("Index");
