@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="">
+      @*d-flex  flex-column min-vh-100*@
     <header>
         <partial name="_NavBar" />
     </header>
@@ -21,8 +22,8 @@
             @RenderBody()
         </main>
     </div>
-
-    <footer class="footer text-muted text-dark bg-primary mt-auto">
+@* mt-auto *@
+    <footer class="footer text-muted text-dark bg-primary fixed-bottom">
         <div class="container">
             &copy; 2022 - eComStoreWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
