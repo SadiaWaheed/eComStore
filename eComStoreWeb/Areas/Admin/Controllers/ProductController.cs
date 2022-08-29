@@ -1,9 +1,7 @@
 ﻿using eComStore.DataAccess.Repository.IRepository;
-using eComStore.Model;
 using eComStore.Model.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Linq;
 
 namespace eComStore.Web.Areas.Admin.Controllers
 {
@@ -21,30 +19,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
         {
             return View();
         }
-        //Get
-        public IActionResult Delete(int? id)
-        {
-            if (id == null || id == 0) return NotFound();
 
-            var objFromDb = _db.Product.GetFirstOrDefault(i => i.Id == id);
-
-            if (objFromDb == null) return NotFound();
-
-            return View(objFromDb);
-        }
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(int? id)
-        {
-            var obj = _db.Product.GetFirstOrDefault(i => i.Id == id);
-
-            if (obj == null) return NotFound();
-
-            _db.Product.Remove(obj);
-            _db.Save();
-            TempData["success"] = "Product deleted successfully!";
-            return RedirectToAction("Index");
-        }
         //Get
         public IActionResult Upsert(int? id)
         {
@@ -74,29 +49,29 @@ namespace eComStore.Web.Areas.Admin.Controllers
                 return View(productVM);
             }
         }
-        [HttpPost]
+        [Microsoft.AspNetCore.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Upsert(ProductViewModel obj, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
                 string rootPath = _hostEnvironment.WebRootPath;
-                if(file != null)
+                if (file != null)
                 {
                     string fileName = Guid.NewGuid().ToString();
                     var uploads = Path.Combine(rootPath, @"images\products");
                     var extension = Path.GetExtension(file.FileName);
 
-                    if(obj.Product.ImageUrl != null)
+                    if (obj.Product.ImageUrl != null)
                     {
                         var oldImage = Path.Combine(rootPath, obj.Product.ImageUrl.TrimStart('\\'));
-                        if(System.IO.File.Exists(oldImage))
+                        if (System.IO.File.Exists(oldImage))
                         {
                             System.IO.File.Delete(oldImage);
                         }
                     }
 
-                    using(var fileStreams = new FileStream(Path.Combine(uploads,fileName+extension),FileMode.Create))
+                    using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
                     {
                         file.CopyTo(fileStreams);
                     }
@@ -126,6 +101,27 @@ namespace eComStore.Web.Areas.Admin.Controllers
         {
             var productList = _db.Product.GetAll(includeProperties: "Category");
             return Json(new { data = productList });
+        }
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            var obj = _db.Product.GetFirstOrDefault(i => i.Id == id);
+
+            if (obj == null)
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
+
+            var oldImage = Path.Combine(_hostEnvironment.WebRootPath, obj.ImageUrl.TrimStart('\\'));
+            if (System.IO.File.Exists(oldImage))
+            {
+                System.IO.File.Delete(oldImage);
+            }
+
+            _db.Product.Remove(obj);
+            _db.Save();
+
+            return Json(new { success = true, message = "Delete successful" });
         }
         #endregion
     }
