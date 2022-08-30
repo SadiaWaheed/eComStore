@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\eComStore.DataAccess\eComStore.DataAccess.csproj" />
+    <ProjectReference Include="..\eComStore.Utility\eComStore.Utility.csproj" />
   </ItemGroup>
 
 </Project>
