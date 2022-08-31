@@ -34,7 +34,10 @@ namespace eComStore.Web.Areas.User.Controllers
             }
             return View(shoppingCartVM);
         }
-
+        public IActionResult Summary()
+        {           
+            return View();
+        }
         public IActionResult Plus(int cartId)
         {
             var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(i => i.Id == cartId);
