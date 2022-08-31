@@ -1,7 +1,9 @@
 ﻿using eComStore.DataAccess.Repository.IRepository;
 using eComStore.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace eComStore.Web.Areas.User.Controllers
 {
@@ -22,14 +24,33 @@ namespace eComStore.Web.Areas.User.Controllers
             IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties:"Category,CoverType");
             return View(productList);
         }
-        public IActionResult Details(int id)
+        public IActionResult Details(int productId)
         {
             ShoppingCart obj = new()
             {
                 Count = 1,
-                Product = _unitOfWork.Product.GetFirstOrDefault(i=>i.Id == id, includeProperties:"Category,CoverType"), 
+                ProductId = productId,
+                Product = _unitOfWork.Product.GetFirstOrDefault(i=>i.Id == productId, includeProperties:"Category,CoverType"), 
             };
             return View(obj);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public IActionResult Details(ShoppingCart obj)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            obj.ApplicationUserId = claim.Value;
+
+            ShoppingCart objFromDb = _unitOfWork.ShoppingCart.GetFirstOrDefault(i => i.ApplicationUserId == claim.Value && i.ProductId == obj.ProductId);
+
+            if (objFromDb == null) _unitOfWork.ShoppingCart.Add(obj);
+            else _unitOfWork.ShoppingCart.IncrementCount(objFromDb, obj.Count);
+
+            _unitOfWork.Save();
+
+            return RedirectToAction(nameof(Index));
         }
         public IActionResult Privacy()
         {
