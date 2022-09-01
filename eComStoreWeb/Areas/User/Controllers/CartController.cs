@@ -141,12 +141,31 @@ namespace eComStore.Web.Areas.User.Controllers
             var service = new SessionService();
             Session session = service.Create(options);
 
+            _unitOfWork.OrderHeader.UpdateStripPaymentID(shoppingCartVM.OrderHeader.Id,session.Id, session.PaymentIntentId);
+            _unitOfWork.Save();
+
             Response.Headers.Add("Location", session.Url);
             return new StatusCodeResult(303);
 
-            //_unitOfWork.ShoppingCart.RemoveRange(shoppingCartVM.ListCart);
-            //_unitOfWork.Save();
-            //return RedirectToAction("Index", "Home");
+        }
+        public IActionResult OrderConfirmation(int id)
+        {
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(i => i.Id == id);
+
+            var service = new SessionService();
+            Session session = service.Get(orderHeader.SessionId);
+
+            //check stripe status
+            if(session.PaymentStatus.ToLower() == SD.PaymentStatusPaid)
+            {
+                _unitOfWork.OrderHeader.UpdateStatus(id, SD.StatusApproved, SD.PaymentStatusApproved);
+                _unitOfWork.Save();
+            }
+
+            List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(i => i.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+            _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+            _unitOfWork.Save();
+            return View(id);
         }
         public IActionResult Plus(int cartId)
         {

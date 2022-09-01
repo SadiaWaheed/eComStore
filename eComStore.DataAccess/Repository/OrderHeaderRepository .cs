@@ -35,5 +35,14 @@ namespace eComStore.DataAccess.Repository
                 }
             }
         }
+
+        public void UpdateStripPaymentID(int id, string sessionId, string PaymentIntentId)
+        {
+            var objFromDb = _db.OrderHeaders.FirstOrDefault(u => u.Id == id);
+
+            objFromDb.SessionId = sessionId;
+            objFromDb.PaymentIntentId = PaymentIntentId;
+
+        }
     }
 }
