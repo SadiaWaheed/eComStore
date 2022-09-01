@@ -4,6 +4,7 @@ using eComStore.Model.ViewModels;
 using eComStore.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace eComStore.Web.Areas.User.Controllers
@@ -32,7 +33,7 @@ namespace eComStore.Web.Areas.User.Controllers
                 OrderHeader = new()
             };
 
-            foreach(var cart in shoppingCartVM.ListCart)
+            foreach (var cart in shoppingCartVM.ListCart)
             {
                 cart.Price = GetPriceBasedOnQuantity(cart.Count, cart.Product.Price, cart.Product.Price50, cart.Product.Price100);
                 shoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
@@ -68,7 +69,7 @@ namespace eComStore.Web.Areas.User.Controllers
 
             return View(shoppingCartVM);
         }
-        [HttpPost,ActionName("Summary")]
+        [HttpPost, ActionName("Summary")]
         [ValidateAntiForgeryToken]
         public IActionResult SummaryPOST()
         {
@@ -104,9 +105,48 @@ namespace eComStore.Web.Areas.User.Controllers
                 _unitOfWork.Save();
             }
 
-            _unitOfWork.ShoppingCart.RemoveRange(shoppingCartVM.ListCart);
-            _unitOfWork.Save();
-            return RedirectToAction("Index", "Home");
+            //stripe Settings
+            var domain = "https://localhost:7184/";
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string>
+                {
+                    "card",
+                },
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = domain+$"user/cart/OrderConfirmation?id={shoppingCartVM.OrderHeader.Id}",
+                CancelUrl = domain+$"user/cart/index",
+            };
+
+            foreach (var item in shoppingCartVM.ListCart)
+            {
+                var sessionLineItem = new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        UnitAmount = (long)(item.Price * 100),//convert to $ as price is in cents
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = item.Product.Title,
+                        },
+
+                    },
+                    Quantity = item.Count,
+                };
+                options.LineItems.Add(sessionLineItem);
+            }
+
+            var service = new SessionService();
+            Session session = service.Create(options);
+
+            Response.Headers.Add("Location", session.Url);
+            return new StatusCodeResult(303);
+
+            //_unitOfWork.ShoppingCart.RemoveRange(shoppingCartVM.ListCart);
+            //_unitOfWork.Save();
+            //return RedirectToAction("Index", "Home");
         }
         public IActionResult Plus(int cartId)
         {
