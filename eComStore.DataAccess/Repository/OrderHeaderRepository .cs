@@ -23,7 +23,7 @@ namespace eComStore.DataAccess.Repository
             _db.Update(obj);
         }
 
-        public void UpdateSratus(int id, string orderStatus, string? paymentStatus = null)
+        public void UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
         {
             var objFromDb = _db.OrderHeaders.FirstOrDefault(u => u.Id == id);
             if (objFromDb != null)
