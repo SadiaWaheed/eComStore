@@ -24,7 +24,28 @@ namespace eComStore.Web.Areas.Admin.Controllers
         {
             return View();
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateOrderDetails()
+        {
+            var objFromDb = _unitOfWork.OrderHeader.GetFirstOrDefault(i => i.Id == orderVM.OrderHeader.Id,tracked: false);
 
+            objFromDb.Name = orderVM.OrderHeader.Name;
+            objFromDb.PhoneNumber = orderVM.OrderHeader.PhoneNumber;
+            objFromDb.StreetAddress = orderVM.OrderHeader.StreetAddress;
+            objFromDb.City = orderVM.OrderHeader.City;
+            objFromDb.State = orderVM.OrderHeader.State;
+            objFromDb.PostalCode = orderVM.OrderHeader.PostalCode;
+
+            if (orderVM.OrderHeader.Carrier != null) objFromDb.Carrier = orderVM.OrderHeader.Carrier;
+            if (orderVM.OrderHeader.TrackingNumber != null) objFromDb.TrackingNumber = orderVM.OrderHeader.TrackingNumber;
+
+            _unitOfWork.OrderHeader.Update(objFromDb);
+            _unitOfWork.Save();
+
+            TempData["success"] = "Order Details updated successfully";
+            return RedirectToAction("Details",new { orderId = objFromDb.Id});
+        }
         public IActionResult Details(int orderId)
         {
             orderVM = new OrderViewModel()
