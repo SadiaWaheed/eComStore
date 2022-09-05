@@ -4,6 +4,8 @@ using eComStore.Model.ViewModels;
 using eComStore.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace eComStore.Web.Areas.Admin.Controllers
@@ -34,6 +36,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
             return View(orderVM);
         }
         [HttpPost]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateOrderDetails()
         {
@@ -56,6 +59,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
             return RedirectToAction("Details", new { orderId = objFromDb.Id });
         }
         [HttpPost]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         [ValidateAntiForgeryToken]
         public IActionResult StartProcessing()
         {
@@ -67,6 +71,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         [ValidateAntiForgeryToken]
         public IActionResult ShipOrder()
         {
@@ -76,12 +81,50 @@ namespace eComStore.Web.Areas.Admin.Controllers
             objFromDb.Carrier = orderVM.OrderHeader.Carrier;
             objFromDb.OrderStatus = SD.StatusShipped;
             objFromDb.ShippingDate = DateTime.Now;
+            if (objFromDb.PaymentStatus == SD.PaymentStatusDelayedPayment) objFromDb.PaymentDueDate = DateTime.Now.AddDays(30);
 
             _unitOfWork.OrderHeader.Update(objFromDb);
             _unitOfWork.Save();
 
             TempData["success"] = "Order Shipped successfully";
-            return RedirectToAction("Details", new { orderId = orderVM.OrderHeader.Id });
+            return RedirectToAction("Details", "Order",new { orderId = orderVM.OrderHeader.Id });
+        }
+        [HttpPost]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        [ValidateAntiForgeryToken]
+        public IActionResult CancelOrder()
+        {
+            var objFromDb = _unitOfWork.OrderHeader.GetFirstOrDefault(i => i.Id == orderVM.OrderHeader.Id, tracked: false);
+
+            if(objFromDb.PaymentStatus == SD.PaymentStatusApproved)
+            {
+                var service = new SessionService();
+                Session session = service.Get(objFromDb.SessionId);
+                if(session.PaymentStatus.ToLower() == SD.PaymentStatusPaid)
+                {
+                    if(session.PaymentIntentId != null)
+                    {
+                        var options = new RefundCreateOptions
+                        {
+                            Reason = RefundReasons.RequestedByCustomer,
+                            PaymentIntent = session.PaymentIntentId
+                        };
+
+                        var refundService = new RefundService();
+                        Refund refund = refundService.Create(options);
+
+                        _unitOfWork.OrderHeader.UpdateStatus(objFromDb.Id, SD.StatusCancelled, SD.StatusRefunded);
+                    }
+                }
+            }
+            else
+            {
+                _unitOfWork.OrderHeader.UpdateStatus(objFromDb.Id, SD.StatusCancelled, SD.StatusCancelled);
+            }
+            _unitOfWork.Save();
+
+            TempData["success"] = "Order Cancelled successfully";
+            return RedirectToAction("Details","Order", new { orderId = orderVM.OrderHeader.Id });
         }
         #region API CALLS
         [HttpGet]
