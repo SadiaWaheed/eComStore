@@ -35,6 +35,73 @@ namespace eComStore.Web.Areas.Admin.Controllers
             };
             return View(orderVM);
         }
+        [ActionName("Details")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Details_Pay_Now(int orderId)
+        {
+            orderVM.OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(i => i.Id == orderVM.OrderHeader.Id, includeProperties: "ApplicationUser");
+            orderVM.OrderDetail = _unitOfWork.OrderDetail.GetAll(i => i.OrderId == orderVM.OrderHeader.Id, includeProperties: "Product");
+
+            //stripe Settings
+            var domain = "https://localhost:7184/";
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string>
+                {
+                    "card",
+                },
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = domain + $"admin/order/PaymentConfirmation?orderHeaderId={orderVM.OrderHeader.Id}",
+                CancelUrl = domain + $"admin/order/details?orderId={orderVM.OrderHeader.Id}",
+            };
+
+            foreach (var item in orderVM.OrderDetail)
+            {
+                var sessionLineItem = new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        UnitAmount = (long)(item.Price * 100),//convert to $ as price is in cents
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = item.Product.Title,
+                        },
+
+                    },
+                    Quantity = item.Count,
+                };
+                options.LineItems.Add(sessionLineItem);
+            }
+
+            var service = new SessionService();
+            Session session = service.Create(options);
+
+            _unitOfWork.OrderHeader.UpdateStripPaymentID(orderVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
+            _unitOfWork.Save();
+
+            Response.Headers.Add("Location", session.Url);
+            return new StatusCodeResult(303);
+        }
+        public IActionResult PaymentConfirmation(int orderHeaderId)
+        {
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(i => i.Id == orderHeaderId);
+            if (orderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment)
+            {
+                var service = new SessionService();
+                Session session = service.Get(orderHeader.SessionId);
+
+                //check stripe status
+                if (session.PaymentStatus.ToLower() == SD.PaymentStatusPaid)
+                {
+                    _unitOfWork.OrderHeader.UpdateStatus(orderHeaderId, orderHeader.OrderStatus, SD.PaymentStatusApproved);
+                    _unitOfWork.Save();
+                }
+            }
+            return View(orderHeaderId);
+        }
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         [ValidateAntiForgeryToken]
@@ -87,7 +154,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
             _unitOfWork.Save();
 
             TempData["success"] = "Order Shipped successfully";
-            return RedirectToAction("Details", "Order",new { orderId = orderVM.OrderHeader.Id });
+            return RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id });
         }
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
@@ -96,13 +163,13 @@ namespace eComStore.Web.Areas.Admin.Controllers
         {
             var objFromDb = _unitOfWork.OrderHeader.GetFirstOrDefault(i => i.Id == orderVM.OrderHeader.Id, tracked: false);
 
-            if(objFromDb.PaymentStatus == SD.PaymentStatusApproved)
+            if (objFromDb.PaymentStatus == SD.PaymentStatusApproved)
             {
                 var service = new SessionService();
                 Session session = service.Get(objFromDb.SessionId);
-                if(session.PaymentStatus.ToLower() == SD.PaymentStatusPaid)
+                if (session.PaymentStatus.ToLower() == SD.PaymentStatusPaid)
                 {
-                    if(session.PaymentIntentId != null)
+                    if (session.PaymentIntentId != null)
                     {
                         var options = new RefundCreateOptions
                         {
@@ -124,7 +191,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
             _unitOfWork.Save();
 
             TempData["success"] = "Order Cancelled successfully";
-            return RedirectToAction("Details","Order", new { orderId = orderVM.OrderHeader.Id });
+            return RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id });
         }
         #region API CALLS
         [HttpGet]
@@ -135,7 +202,8 @@ namespace eComStore.Web.Areas.Admin.Controllers
             {
                 orderHeaders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser");
             }
-            else {
+            else
+            {
                 var claimIdentiry = (ClaimsIdentity)User.Identity;
                 var claim = claimIdentiry.FindFirst(ClaimTypes.NameIdentifier);
                 orderHeaders = _unitOfWork.OrderHeader.GetAll(i => i.ApplicationUserId == claim.Value, includeProperties: "ApplicationUser");
