@@ -24,11 +24,20 @@ namespace eComStore.Web.Areas.Admin.Controllers
         {
             return View();
         }
+        public IActionResult Details(int orderId)
+        {
+            orderVM = new OrderViewModel()
+            {
+                OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(i => i.Id == orderId, includeProperties: "ApplicationUser"),
+                OrderDetail = _unitOfWork.OrderDetail.GetAll(i => i.OrderId == orderId, includeProperties: "Product")
+            };
+            return View(orderVM);
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateOrderDetails()
         {
-            var objFromDb = _unitOfWork.OrderHeader.GetFirstOrDefault(i => i.Id == orderVM.OrderHeader.Id,tracked: false);
+            var objFromDb = _unitOfWork.OrderHeader.GetFirstOrDefault(i => i.Id == orderVM.OrderHeader.Id, tracked: false);
 
             objFromDb.Name = orderVM.OrderHeader.Name;
             objFromDb.PhoneNumber = orderVM.OrderHeader.PhoneNumber;
@@ -44,18 +53,36 @@ namespace eComStore.Web.Areas.Admin.Controllers
             _unitOfWork.Save();
 
             TempData["success"] = "Order Details updated successfully";
-            return RedirectToAction("Details",new { orderId = objFromDb.Id});
+            return RedirectToAction("Details", new { orderId = objFromDb.Id });
         }
-        public IActionResult Details(int orderId)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult StartProcessing()
         {
-            orderVM = new OrderViewModel()
-            {
-                OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(i => i.Id == orderId, includeProperties: "ApplicationUser"),
-                OrderDetail = _unitOfWork.OrderDetail.GetAll(i => i.OrderId == orderId, includeProperties: "Product")
-            };
-            return View(orderVM);
+            _unitOfWork.OrderHeader.UpdateStatus(orderVM.OrderHeader.Id, SD.StatusInProcess);
+            _unitOfWork.Save();
+
+            TempData["success"] = "Order Status updated successfully";
+            return RedirectToAction("Details", new { orderId = orderVM.OrderHeader.Id });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ShipOrder()
+        {
+            var objFromDb = _unitOfWork.OrderHeader.GetFirstOrDefault(i => i.Id == orderVM.OrderHeader.Id, tracked: false);
+
+            objFromDb.TrackingNumber = orderVM.OrderHeader.TrackingNumber;
+            objFromDb.Carrier = orderVM.OrderHeader.Carrier;
+            objFromDb.OrderStatus = SD.StatusShipped;
+            objFromDb.ShippingDate = DateTime.Now;
+
+            _unitOfWork.OrderHeader.Update(objFromDb);
+            _unitOfWork.Save();
+
+            TempData["success"] = "Order Shipped successfully";
+            return RedirectToAction("Details", new { orderId = orderVM.OrderHeader.Id });
+        }
         #region API CALLS
         [HttpGet]
         public IActionResult GetAll(string status)
