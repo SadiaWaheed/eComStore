@@ -1,10 +1,13 @@
 ﻿using eComStore.DataAccess.Repository.IRepository;
 using eComStore.Model;
+using eComStore.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eComStore.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class CoverTypeController : Controller
     {
         private readonly IUnitOfWork _db;
