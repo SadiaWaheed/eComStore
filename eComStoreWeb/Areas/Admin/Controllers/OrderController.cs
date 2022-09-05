@@ -1,5 +1,6 @@
 ﻿using eComStore.DataAccess.Repository.IRepository;
 using eComStore.Model;
+using eComStore.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eComStore.Web.Areas.Admin.Controllers
@@ -19,10 +20,29 @@ namespace eComStore.Web.Areas.Admin.Controllers
 
         #region API CALLS
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll(string status)
         {
             IEnumerable<OrderHeader> orderHeaders;
             orderHeaders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser");
+
+            switch (status)
+            {
+                case "pending":
+                    orderHeaders = orderHeaders.Where(u => u.PaymentStatus == SD.PaymentStatusDelayedPayment);
+                    break;
+                case "inprocess":
+                    orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusInProcess);
+                    break;
+                case "completed":
+                    orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusShipped);
+                    break;
+                case "approved":
+                    orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusApproved);
+                    break;
+                default:
+                    break;
+            }
+
             return Json(new { data = orderHeaders });
         }
         #endregion
