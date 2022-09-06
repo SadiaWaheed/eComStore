@@ -1,5 +1,6 @@
 ﻿using eComStore.DataAccess.Repository.IRepository;
 using eComStore.Model;
+using eComStore.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -45,10 +46,17 @@ namespace eComStore.Web.Areas.User.Controllers
 
             ShoppingCart objFromDb = _unitOfWork.ShoppingCart.GetFirstOrDefault(i => i.ApplicationUserId == claim.Value && i.ProductId == obj.ProductId);
 
-            if (objFromDb == null) _unitOfWork.ShoppingCart.Add(obj);
-            else _unitOfWork.ShoppingCart.IncrementCount(objFromDb, obj.Count);
-
-            _unitOfWork.Save();
+            if (objFromDb == null)
+            {
+                _unitOfWork.ShoppingCart.Add(obj);
+                _unitOfWork.Save();
+                HttpContext.Session.SetInt32(SD.SessionCart, _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value).ToList().Count);
+            }
+            else
+            {
+                _unitOfWork.ShoppingCart.IncrementCount(objFromDb, obj.Count);
+                _unitOfWork.Save();
+            }
 
             return RedirectToAction(nameof(Index));
         }
