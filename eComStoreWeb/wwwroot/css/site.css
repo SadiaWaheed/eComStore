@@ -22,3 +22,10 @@ body {
 .btn-back {
     width: 150px
 }
+.div-card{
+    position:relative;
+}
+.div-btnDetail{
+    position:absolute;
+    bottom:1px;
+}

@@ -27,13 +27,13 @@
                             <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Create User</a>
                         </div>
                     </li>
-                }
-                <li class="nav-item">
-                    <a class=nav-link asp-area="Admin" asp-controller="Order" asp-action="Index">
-                        Manage Order
-                    </a>
-                </li>
 
+                    <li class="nav-item">
+                        <a class=nav-link asp-area="Admin" asp-controller="Order" asp-action="Index">
+                            Manage Order
+                        </a>
+                    </li>
+                }
                 <li class="nav-item">
                     <a class=nav-link asp-area="User" asp-controller="Cart" asp-action="Index">
                         @await Component.InvokeAsync("ShoppingCart")

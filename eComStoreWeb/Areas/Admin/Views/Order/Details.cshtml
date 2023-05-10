@@ -153,19 +153,22 @@
                                     <input value="@Model.OrderHeader.ShippingDate.ToShortDateString()" id="shippingDate" type="text" readonly class="form-control" />
                                 </div>
                             </div>
-                            <div class="row my-1">
-                                @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
-                                {
+                            @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
+                            {
+
+                                <div class="row my-1">
                                     <div class="col-3">Session ID</div>
                                     <div class="col-9">
                                         <input asp-for="OrderHeader.SessionId" type="text" readonly class="form-control" />
                                     </div>
+                                </div>
+                                <div class="row my-1">
                                     <div class="col-3">Peyment Intent ID</div>
                                     <div class="col-9">
                                         <input asp-for="OrderHeader.PaymentIntentId" type="text" readonly class="form-control" />
                                     </div>
-                                }
-                            </div>
+                                </div>
+                            }
                             <div class="row my-1">
                                 @if (Model.OrderHeader.SessionId == null)
                                 {

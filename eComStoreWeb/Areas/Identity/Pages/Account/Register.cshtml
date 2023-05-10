@@ -15,7 +15,7 @@ else
 }
 
 <div class="row pt-4">
-    <div class="col-md-7">
+    <div class="col-md-6">
         <form id="registerForm" class="row" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <h2>Create a new account.</h2>
             <hr />
@@ -84,9 +84,9 @@ else
     </div>
     @if (!User.IsInRole(SD.Role_Admin))
     {
-        <div class="col-md-5">
+        <div class="col-md-6">
             <section>
-                <h3>Use another service to register.</h3>
+                <h4>Use another service to register.</h4>
                 <hr />
                 @{
                     if ((Model.ExternalLogins?.Count ?? 0) == 0)
