@@ -29,10 +29,3 @@ body {
     position:absolute;
     bottom:1px;
 }
-.card-image{
-    max-height:400px;
-    max-width:278px;
-}
-.home-card-body{
-    height:210px;
-}

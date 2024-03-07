@@ -1,4 +1,10 @@
-﻿namespace eComStore.DataAccess.DbInitializer
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace eComStore.DataAccess.DbInitializer
 {
     public interface IDbInitializer
     {
