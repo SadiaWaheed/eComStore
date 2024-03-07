@@ -1,12 +1,7 @@
 ﻿using eComStore.DataAccess.Data;
 using eComStore.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace eComStore.DataAccess.Repository
 {
