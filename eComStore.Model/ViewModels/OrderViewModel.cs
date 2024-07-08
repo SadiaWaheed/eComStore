@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace eComStore.Model.ViewModels
+﻿namespace eComStore.Model.ViewModels
 {
     public class OrderViewModel
     {

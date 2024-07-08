@@ -1,9 +1,7 @@
 ﻿using eComStore.DataAccess.Repository.IRepository;
 using eComStore.Utility;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace eComStore.Web.ViewComponents
 {
