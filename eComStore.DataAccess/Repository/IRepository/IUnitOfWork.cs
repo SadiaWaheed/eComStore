@@ -16,6 +16,7 @@ namespace eComStore.DataAccess.Repository.IRepository
         IApplicationUserRepository ApplicationUser { get; }
         IOrderHeaderRepository OrderHeader { get; }
         IOrderDetailRepository OrderDetail { get; }
+        IWishListRepository WishList { get; }
         void Save();
     }
 }

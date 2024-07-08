@@ -15,5 +15,7 @@ namespace eComStore.Model.ViewModels
         public IEnumerable<SelectListItem> CategoryList { get; set; }
         [ValidateNever]
         public IEnumerable<SelectListItem> CoverTypeList { get; set; }
+        [ValidateNever]
+        public IEnumerable<SelectListItem> WishList { get; set; }
     }
 }
