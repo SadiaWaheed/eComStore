@@ -29,7 +29,7 @@
 
                 <div class="row pt-2 container">
                     <div class="col-lg-3 col-3 d-block">
-                        <select asp-for="@Model.Count" class="form-select p-1 h-100" >
+                        <select asp-for="@Model.Count" class="form-select p-1 h-100">
                             <option selected>1</option>
                         </select>
                     </div>
@@ -37,9 +37,9 @@
                         <button type="submit" value="Add to Cart" width="100%" class="btn btn-primary form-control h-100">Add to Cart</button>
                     </div>
                     <div class="col-lg-2 col-2 d-block">
-                        <a class="btn btn-outline-secondary rounded-3 h-100">
-                             <i class="fa-regular fa-heart fa-2xl"></i> 
-                            </a>
+                        <a asp-action="AddRemoveWishlist" class="btn btn-outline-secondary rounded-3 h-100" asp-route-productId="@Model.Product.Id">
+                            <i class="@(Model.WishList != null ? "fa-solid fa-heart fa-2xl":"fa-regular fa-heart fa-2xl")"></i>
+                        </a>
                     </div>
                 </div>
 
@@ -96,7 +96,7 @@
                         <div class="row">
                             <p class="text-secondary">@Html.Raw(Model.Product.Description)</p>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>

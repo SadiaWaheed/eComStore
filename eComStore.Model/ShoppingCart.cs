@@ -20,5 +20,7 @@ namespace eComStore.Model
         public ApplicationUser ApplicationUser { get; set; }
         [NotMapped]
         public double Price { get; set; }
+        [NotMapped]
+        public WishList? WishList { get; set; }
     }
 }

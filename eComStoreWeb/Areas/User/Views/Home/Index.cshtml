@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<Product>
+
 <div class="row">
     @foreach (var product in Model)
     {
@@ -7,16 +8,16 @@
                 <div class="image-body">
                     <div class="image-icon-container p-1">
                         <div class="image-icon rounded-3 p-1">
-                            <button class="image-icon-btn rounded-3">
-                                <i class="fa-regular fa-heart fa-xl"></i>
-                            </button>
+                            <a asp-action="AddRemoveWishlist" class="image-icon-btn rounded-3 p-1" asp-route-productId="@product.Id">
+                                <i class="@(product.InWishList? "fa-solid fa-heart fa-xl" :"fa-regular fa-heart fa-xl")"></i>
+                            </a>
                         </div>
                         <div class="image-icon rounded-3 p-1">
-                            <button class="image-icon-btn rounded-3">
+                            <a class="image-icon-btn rounded-3 p-1">
                                 <i class="fa-regular fa-heart fa-xl"></i>
-                            </button>
+                            </a>
                         </div>
-                    </div> 
+                    </div>
                     <img src="@product.ImageUrl" onerror="this.error=null;this.src='\\images\\products\\no-image-found.jpg';" class="card-img-top rounded-3 " />
 
                 </div>

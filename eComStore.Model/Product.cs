@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace eComStore.Model
 {
@@ -44,9 +44,11 @@ namespace eComStore.Model
         public Category Category { get; set; }
 
         [Required]
-        [Display(Name ="Cover Type")]
+        [Display(Name = "Cover Type")]
         public int CoverTypeId { get; set; }
         [ValidateNever]
         public CoverType CoverType { get; set; }
+        [NotMapped]
+        public bool InWishList { get; set; } = false;
     }
 }
