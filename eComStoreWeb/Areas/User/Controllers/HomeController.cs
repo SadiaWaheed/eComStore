@@ -13,7 +13,7 @@ namespace eComStore.Web.Areas.User.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
-
+        private Claim claim;
         public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
@@ -22,19 +22,15 @@ namespace eComStore.Web.Areas.User.Controllers
 
         public IActionResult Index()
         {
-            if (!User.Identity.IsAuthenticated)
+            IEnumerable<Product> productList;
+            if (User.Identity.IsAuthenticated)
             {
-                IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
-                return View(productList);
-            }
-            else
-            {
-                var claimsIdentity = (ClaimsIdentity)User.Identity;
-                var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+                if (claim == null)
+                    claim = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier);
 
                 IEnumerable<WishList> wishlist = _unitOfWork.WishList.GetAll(x => x.ApplicationUserId == claim.Value);
 
-                IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+                productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
 
                 if (wishlist != null)
                 {
@@ -43,28 +39,56 @@ namespace eComStore.Web.Areas.User.Controllers
                         product.InWishList = true;
                     }
                 }
-                return View(productList);
             }
+            else
+            {
+                if (claim != null) claim = null;
+
+                productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+            }
+            return View(productList);
         }
         public IActionResult Details(int productId)
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            if (claim == null && User.Identity.IsAuthenticated)
+                claim = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier);
 
             ShoppingCart obj = new()
             {
                 Count = 1,
                 ProductId = productId,
                 Product = _unitOfWork.Product.GetFirstOrDefault(i => i.Id == productId, includeProperties: "Category,CoverType"),
-                WishList = _unitOfWork.WishList.GetFirstOrDefault(i => i.ApplicationUserId == claim.Value && i.ProductId == productId)
+                WishList = User.Identity.IsAuthenticated ? _unitOfWork.WishList.GetFirstOrDefault(i => i.ApplicationUserId == claim.Value && i.ProductId == productId)
+                    : null
             };
+
             return View(obj);
+        }
+        [Authorize]
+        public IActionResult WishList()
+        {
+            if (claim == null)
+                claim = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier);
+
+            IEnumerable<WishList> wishlist = _unitOfWork.WishList.GetAll(x => x.ApplicationUserId == claim.Value);
+
+            if (wishlist != null)
+            {
+                IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType").Where(p => wishlist.Any(x => x.ProductId == p.Id));
+
+                foreach (var product in productList)
+                {
+                    product.InWishList = true;
+                }
+                return View("Index", productList);
+            }
+            return RedirectToAction(nameof(Error));
         }
         [Authorize]
         public IActionResult AddRemoveWishlist(int productId)
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            if (claim == null)
+                claim = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier);
 
             WishList wishList = _unitOfWork.WishList.GetFirstOrDefault(w => w.ProductId == productId && w.ApplicationUserId == claim.Value);
 
@@ -84,15 +108,21 @@ namespace eComStore.Web.Areas.User.Controllers
                 _unitOfWork.WishList.Remove(wishList);
                 _unitOfWork.Save();
             }
-            return Redirect(Request.Headers["Referer"].ToString());
+
+            var reditectTo = Request.Headers["Referer"].ToString();
+            if (reditectTo.Contains("Login"))
+                return RedirectToAction(nameof(Index));
+            else
+                return Redirect(reditectTo);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
         public IActionResult Details(ShoppingCart obj)
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            if (claim == null)
+                claim = ((ClaimsIdentity)User.Identity).FindFirst(ClaimTypes.NameIdentifier);
+
             obj.ApplicationUserId = claim.Value;
 
             ShoppingCart objFromDb = _unitOfWork.ShoppingCart.GetFirstOrDefault(i => i.ApplicationUserId == claim.Value && i.ProductId == obj.ProductId);
