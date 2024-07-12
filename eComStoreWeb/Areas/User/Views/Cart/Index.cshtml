@@ -19,26 +19,26 @@
                                     </div>
                                     <div class="col-7 col-lg-7">
                                         <div class="row">
-                                            <span class="card-title h5 text-primary"><b>@item.Product.Title</b></span>
+                                            <span class="card-title h4 text-primary"><b>@item.Product.Title</b></span>
                                         </div>
                                         <div class="row">
                                             <span class="card-title text-info"><b>@item.Product.Author</b></span>
                                         </div>
                                         <div class="row">
-                                            <span></span>
+                                            <spa class="card-title text-primary">Seller name</spa>
                                         </div>
                                     </div>
                                     <div class="col-2 col-lg-2">
                                         <div class="row">
                                             <p>
                                                 <span class="currency">SAR</span>
-                                                <span class="price"><b>@((item.Product.Price * item.Count).ToString("0.00"))</b></span>
+                                                <span class="h3"><b>@((item.Product.Price * item.Count).ToString("0.00"))</b></span>
                                             </p>
                                         </div>
                                         <div class="row">
                                             <p>
                                                 <span class="list-price"><strike>@item.Product.ListPrice.ToString("0.00")</strike></span>
-                                                <span class="discount">@item.Product.ListPrice.ToString("00")%</span>
+                                                <span class="discount">@item.Product.ListPrice.ToString("00")% OFF</span>
                                             </p>
                                         </div>
                                     </div>
@@ -50,7 +50,7 @@
                                     <div class="col-3 col-lg-3">
                                         <a asp-action="Remove" asp-route-cartId="@item.Id" class="btn btn-outline-dark rounded-3 ">
                                             <i class="bi bi-trash-fill"></i> Remove
-                                        </a>                                       
+                                        </a>
                                     </div>
                                     <div class="col-4 col-lg-4">
                                     </div>
@@ -82,17 +82,34 @@
 
         <div class="col-4">
             <div class="card">
-                <div class="row p-4">
-                    <h3 class="text-primary">Order Summary</h3>
+                <div class="card-body">
+                    <div class="row p-4">
+                        <h3 class="text-primary">Order Summary</h3>
+                    </div>
+                    <div class="row">
+                        <ul class="">
+                            <li class="d-flex justify-content-between ">
+                                <span class="text-primary"> Total (USD)</span>
+                                <strong class="text-primary">@Model.OrderHeader.OrderTotal.ToString("c")</strong>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="row list-group">
+                        <div class="list-group-item  d-flex justify-content-between">
+                                <span class="text-info"> Total (USD)</span>
+                                <strong class="text-info">@Model.OrderHeader.OrderTotal.ToString("c")</strong>
+                            </div>
+                        </ul>
+                    </div>
                 </div>
-                <div class="row">
-
+                <div class="card-footer">
+                    <a asp-action="Summary" class="btn btn-primary form-control">CHECKOUT</a>
                 </div>
             </div>
         </div>
     </div>
 </form>
-@* 
+@*
 <form method="post">
     <div class="container">
         <div class="card">
