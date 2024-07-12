@@ -11,13 +11,13 @@
                 <div class="col-12 col-lg-12 col-xl-12 ">
                     @foreach (var item in Model.ListCart)
                     {
-                        <div class="card rounded-3 m-2">
+                        <div class="card rounded-3 m-sm-1">
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-2 col-xl-2 col-lg-2">
+                                <div class="row order-0">
+                                    <div class="col-sm-2 col-xl-2 col-lg-2 pt-2">
                                         <img src="@item.Product.ImageUrl" onerror="this.error=null; this.src='\\images\\products\\no-image-found.jpg';" class="card-img rounded" />
                                     </div>
-                                    <div class="col-6 col-xl-7 col-lg-7">
+                                    <div class="col-sm-6 col-xl-7 col-lg-7">
                                         <div class="row">
                                             <span class="card-title h4 text-primary"><b>@item.Product.Title</b></span>
                                         </div>
@@ -25,10 +25,10 @@
                                             <span class="card-title text-info"><b>@item.Product.Author</b></span>
                                         </div>
                                         <div class="row">
-                                            <spa class="card-title text-primary">Seller name</spa>
+                                            <span class="card-title text-primary">Seller name</span>
                                         </div>
                                     </div>
-                                    <div class="col-3 col-xl-2 col-lg-2">
+                                    <div class="col-sm-3 col-xl-2 col-lg-2">
                                         <div class="row">
                                             <p>
                                                 <span class="currency">SAR</span>
@@ -44,27 +44,26 @@
                                     </div>
                                 </div>
                                 <div class="row">
-
-                                    <div class="col-2 col-xl-2 col-lg-2">
+                                    <div class="col-sm-2 col-xl-2 col-lg-2">
                                     </div>
-                                    <div class="col-4 col-xl-3 col-lg-3">
-                                        <a asp-action="Remove" asp-route-cartId="@item.Id" class="btn btn-outline-dark rounded-3 ">
+                                    <div class="col-sm-4 col-xl-3 col-lg-3">
+                                        <a asp-action="Remove" asp-route-cartId="@item.Id" class="btn btn-outline-dark rounded-3 w-100">
                                             <i class="bi bi-trash-fill"></i> Remove
                                         </a>
                                     </div>
-                                    <div class="col-2 col-xl-4 col-lg-4">
+                                    <div class="col-sm-2 col-xl-4 col-lg-4">
                                     </div>
-                                    <div class="col-4 col-xl-3 col-lg-3">
+                                    <div class="col-sm-4 col-xl-3 col-lg-3 pt-1">
                                         <div class="row">
-                                            <div class="col-4 col-xl-4 col-lg-4">
+                                            <div class="col-3 col-sm-4 col-xl-4 col-lg-4">
                                                 <a asp-action="Plus" asp-route-cartId="@item.Id" class="btn btn-outline-dark rounded-3">
                                                     <i class="fa fa-plus"></i>
                                                 </a>
                                             </div>
-                                            <div class="col-2 col-xl-2 col-lg-2">
+                                            <div class="col-6 col-sm-2 col-xl-2 col-lg-2 m-2">
                                                 <p class="text-center"><span class="h2"><strong>@item.Count</strong></span></p>
                                             </div>
-                                            <div class="col-4 col-xl-4 col-lg-4">
+                                            <div class="col-2 col-sm-2 col-xl-4 col-lg-4">
                                                 <a asp-action="Minus" asp-route-cartId="@item.Id" class="btn btn-outline-dark rounded-3">
                                                     <i class="fa fa-minus"></i>
                                                 </a>
@@ -81,9 +80,9 @@
         </div>
 
         <div class="col-xl-4 order-1">
-            <div class="card rounded-3 m-2">
+            <div class="card rounded-3 m-sm-2 mt-2">
                 <div class="card-body">
-                    <div class="row p-4">
+                    <div class="row p-1 p-sm-4">
                         <h3 class="text-primary">Order Summary</h3>
                     </div>
                     <div class="row">
