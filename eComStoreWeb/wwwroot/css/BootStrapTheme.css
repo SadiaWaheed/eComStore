@@ -2976,8 +2976,8 @@ textarea.form-control-lg {
 }
 
 .input-group-lg > .btn, .input-group-lg > .form-control, .input-group-lg > .form-select, .input-group-lg > .input-group-text {
-    padding: 2rem 2rem;
-    font-size: 1.25rem
+    padding: 1.5rem 1.5rem;
+    font-size: 1rem
 }
 
 .input-group-sm > .btn, .input-group-sm > .form-control, .input-group-sm > .form-select, .input-group-sm > .input-group-text {
@@ -3178,8 +3178,8 @@ textarea.form-control-lg {
     }
 
 .btn {
-    --bs-btn-padding-x: 1.5rem;
-    --bs-btn-padding-y: 0.75rem;
+    --bs-btn-padding-x: 1rem;
+    --bs-btn-padding-y: 0.25rem;
     --bs-btn-font-family:;
     --bs-btn-font-size: 1rem;
     --bs-btn-font-weight: 600;
