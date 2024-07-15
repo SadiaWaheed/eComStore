@@ -235,7 +235,6 @@ namespace eComStoreWeb.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CategoryId")
-                    .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("CoverTypeId")
