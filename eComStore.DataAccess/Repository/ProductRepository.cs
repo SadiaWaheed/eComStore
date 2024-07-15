@@ -27,6 +27,7 @@ namespace eComStore.DataAccess.Repository
                 objFromDb.CategoryId = obj.CategoryId;
                 objFromDb.Author = obj.Author;
                 objFromDb.CoverTypeId = obj.CoverTypeId;
+                objFromDb.GenreId = obj.GenreId;
                 if (obj.ImageUrl != null)
                 {
                     objFromDb.ImageUrl = obj.ImageUrl;
