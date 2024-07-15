@@ -21,7 +21,7 @@ namespace eComStore.Web.Areas.User.Controllers
         }
 
         public IActionResult Index()
-        {
+      {
             IEnumerable<Product> productList;
             if (User.Identity.IsAuthenticated)
             {
@@ -44,7 +44,7 @@ namespace eComStore.Web.Areas.User.Controllers
             {
                 if (claim != null) claim = null;
 
-                productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+                productList = _unitOfWork.Product.GetAll(includeProperties: "Category");
             }
             return View(productList);
         }

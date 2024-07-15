@@ -43,18 +43,18 @@ namespace eComStore.Model
         [ValidateNever]
         public Category Category { get; set; }
 
-
+        [Required]
         [Display(Name = "Cover Type")]
         public int CoverTypeId { get; set; }
         [ValidateNever]
         public CoverType CoverType { get; set; }
 
-
+      
         [Display(Name = "Genre")]
         public int? GenreId { get; set; }
         [ForeignKey("GenreId")]
         [ValidateNever]
-        public Genre Genre { get; set; }
+        public Genre? Genre { get; set; }
 
         
         [NotMapped]
