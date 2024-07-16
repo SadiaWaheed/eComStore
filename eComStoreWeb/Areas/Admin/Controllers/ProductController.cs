@@ -38,6 +38,11 @@ namespace eComStore.Web.Areas.Admin.Controllers
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
+                }),
+                GenreList = _db.Genre.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
                 })
             };
             if (id == null || id == 0)
@@ -103,7 +108,8 @@ namespace eComStore.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var productList = _db.Product.GetAll(includeProperties: "Category");
+            var productList = _db.Product.GetAll(includeProperties: "Category,CoverType,Genre");
+            //includeProperties: "Category,CovertType"
             return Json(new { data = productList });
         }
         [HttpDelete]
