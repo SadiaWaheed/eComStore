@@ -16,8 +16,10 @@
                 @if (User.IsInRole(SD.Role_Admin))
                 {
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Content Management</a>
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Manage</a>
                         <div class="dropdown-menu">
+                            <a class=dropdown-item asp-area="Admin" asp-controller="Order" asp-action="Index">Manage Orders</a>
+                            <div class="dropdown-divider"></div>
                             <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Category</a>
                             <a class="dropdown-item" asp-area="Admin" asp-controller="Genre" asp-action="Index">Genre</a>
                             <a class="dropdown-item" asp-area="Admin" asp-controller="CoverType" asp-action="Index">Cover Type</a>
@@ -27,12 +29,6 @@
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Create User</a>
                         </div>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class=nav-link asp-area="Admin" asp-controller="Order" asp-action="Index">
-                            Manage Order
-                        </a>
                     </li>
                 }
                 <li class="nav-item">
