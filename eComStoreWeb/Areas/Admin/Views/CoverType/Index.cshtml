@@ -20,16 +20,16 @@
 <table class="table table-bordered table-striped" width="100%">
     <thead>
         <tr>
-            <td width="50%">Name</td>
+            <td width="90%">Name</td>
         </tr>
     </thead>
     <tbody>
         @foreach (var obj in Model)
         {
             <tr>
-                <td width="50%">@obj.Name</td>
+                <td width="90%">@obj.Name</td>
                 <td>
-                    <div class="w-75 btn-group" role="group">
+                    <div class=" btn-group" role="group">
                         <a asp-controller="CoverType" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-outline-dark rounded-3 mx-2">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
