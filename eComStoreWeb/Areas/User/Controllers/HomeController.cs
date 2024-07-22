@@ -30,7 +30,7 @@ namespace eComStore.Web.Areas.User.Controllers
 
                 IEnumerable<WishList> wishlist = _unitOfWork.WishList.GetAll(x => x.ApplicationUserId == claim.Value);
 
-                productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+                productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType,Genre");
 
                 if (wishlist != null)
                 {
@@ -44,7 +44,7 @@ namespace eComStore.Web.Areas.User.Controllers
             {
                 if (claim != null) claim = null;
 
-                productList = _unitOfWork.Product.GetAll(includeProperties: "Category");
+                productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType,Genre");
             }
             return View(productList);
         }
@@ -57,7 +57,7 @@ namespace eComStore.Web.Areas.User.Controllers
             {
                 Count = 1,
                 ProductId = productId,
-                Product = _unitOfWork.Product.GetFirstOrDefault(i => i.Id == productId, includeProperties: "Category,CoverType"),
+                Product = _unitOfWork.Product.GetFirstOrDefault(i => i.Id == productId, includeProperties: "Category,CoverType,Genre"),
                 WishList = User.Identity.IsAuthenticated ? _unitOfWork.WishList.GetFirstOrDefault(i => i.ApplicationUserId == claim.Value && i.ProductId == productId)
                     : null
             };
