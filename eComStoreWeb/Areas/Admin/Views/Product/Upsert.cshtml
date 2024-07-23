@@ -3,14 +3,20 @@
 <form method="post" asp-action="Upsert" enctype="multipart/form-data">
     <input asp-for="Product.Id" hidden />
     <input asp-for="Product.ImageUrl" hidden />
-
+    <div class="row">
+        <div class="col-lg-8 p-4 order-1 order-lg-0">
+                <h2 class="text-primary text-center text-lg-start">@(Model.Product.Id != 0 ? "Edit" : "Create") Product</h2>          
+        </div>
+        <div class="col-lg-4 p-4 order-0 order-lg-1  d-flex justify-content-end">
+            <a asp-controller="Product" asp-action="Index" class="btn btn-outline-dark rounded-3 w-100" >
+                Back to List
+            </a>
+        </div>
+    </div>
     <div class="row">
         <div class="col-10">
             <div class="border p-3 mt-4 row">
-                <div class="col-12 pb-2">
-                    <h2 class="text-primary">@(Model.Product.Id != 0 ? "Edit" : "Create") Product</h2>
-                    <hr />
-                </div>
+                
                 @*<div asp-validation-summary="All"></div>*@
 
                 <div class="mb-3 col-6">
@@ -81,7 +87,7 @@
                     <span asp-validation-for="Product.GenreId" class="text-danger"></span>
                 </div>
                 
-                <div class="col-12">
+                <div class="col-12 d-flex justify-content-end">
                     @if (Model.Product.Id != 0)
                     {
                         <button type="submit" class="btn btn-primary" style="width:150px">Update</button>
@@ -90,9 +96,7 @@
                     {
                         <button type="submit" onclick="return ValidateInput()" class="btn btn-primary" style="width:150px">Create</button>
                     }
-                    <a asp-controller="Product" asp-action="Index" class="btn btn-secondary" style="width:150px">
-                        Back to List
-                    </a>
+                   
                 </div>
             </div>
         </div>
