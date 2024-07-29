@@ -1,30 +1,4 @@
-﻿
-//const _fileUploadWrapper = document.querySelector('.file-upload-wrapper');
-//const dndMultipleFiles = document.querySelector('#dnd-multiple-files');
-//const fileUploadPreviews = document.querySelectorAll('.file-upload-previews');
-
-//fileUploadPreviews[0].addEventListener('dragover', (event) => {
-//    event.preventDefault();
-//    fileUploadPreviews.classList.add('dragover');
-//})
-//fileUploadPreviews[0].addEventListener('dragleave', () => {
-//    fileUploadPreviews.classList.remove('dragover');
-//});
-//fileUploadPreviews[0].addEventListener('drop', (event) => {
-//    event.preventDefault();
-//    //fileUploadPreviews.classList.remove('dragover');
-//    var upload = new FileUpload(fileUploadPreviews);
-//    //upload._createMultipleList(event);
-//    //upload._onChangeEvent()
-//});
-//dndMultipleFiles.addEventListener('change', (event) => {
-//    var upload = new FileUpload(dndMultipleFiles);
-//   // upload._createMultipleList(event);
-//   // upload._onChangeEvent()
-//});
-
-// Default Options
-const Default = {
+﻿const Default = {
     maxFileSize: Infinity,
     defaultFile: null,
     height: null,
@@ -39,9 +13,8 @@ const Default = {
     previewMsg: 'Drag and drop or click to replace',
     removeBtn: 'Remove',
     disabledRemoveBtn: false,
-    maxFileQuantity: Infinity,
+    maxFileQuantity: Infinity
 };
-
 
 const UnitTypes = {
     G: 1000000000,
@@ -49,10 +22,15 @@ const UnitTypes = {
     K: 1000,
     B: 1,
 };
+
 const NAME = 'fileUpload';
 const DATA_KEY = `datakey.${NAME}`;
 const EVENT_KEY = `.${DATA_KEY}`;
 const MAX_UID = 1000000;
+
+const EVENT_ERROR = `fileError${EVENT_KEY}`;
+const EVENT_FILE_REMOVE = `fileRemove${EVENT_KEY}`;
+const EVENT_FILE_ADD = `fileAdd${EVENT_KEY}`;
 
 const getUID = (prefix) => {
     do {
@@ -61,38 +39,6 @@ const getUID = (prefix) => {
 
     return prefix;
 };
-const EVENT_ERROR = `fileError${EVENT_KEY}`;
-const EVENT_FILE_REMOVE = `fileRemove${EVENT_KEY}`;
-const EVENT_FILE_ADD = `fileAdd${EVENT_KEY}`;
-function handleFiles(files) {
-    const types = file.type.split('/');
-    const fileUploadRender = document.createElement('div');
-    fileUploadRender.className = 'file-upload-render';
-
-    if (types[0] === 'image') {
-        const reader = new FileReader();
-        reader.onloadend = function () {
-            const imgEl = document.createElement('img');
-            imgEl.src = this.result;
-            imgEl.className = 'file-upload-preview-img';
-            fileUploadRender.appendChild(imgEl);
-        };
-        if (file) {
-            reader.readAsDataURL(file);
-        }
-    } else {
-        const fileIco = document.createElement('i');
-        fileIco.className = 'fas fa-file file-upload-file-icon';
-        const fileUploadExtension = document.createElement('span');
-        fileUploadExtension.className = 'file-upload-extension';
-        fileUploadExtension.textContent = types[1];
-
-        fileUploadRender.appendChild(fileIco);
-        fileUploadRender.appendChild(fileUploadExtension);
-    }
-
-    return fileUploadRender;
-}
 class FileUpload {
     constructor(element, options = {}) {
         this._element = element;
@@ -123,6 +69,9 @@ class FileUpload {
             }
             this._onChangeEvent();
         });
+        if (this.options.isUpdate && this._files !== []) {
+            this._element.dispatchEvent('change');
+        }
     }
 
     dispose() {
@@ -142,11 +91,13 @@ class FileUpload {
         this._errors = [];
         this._createDropZone();
     }
+
     update(newOptions = {}) {
         this.options = this._getConfig(newOptions);
         this._createNativeAttr();
         this._createDropZone();
     }
+
     _getConfig(options) {
         const config = { ...Default, ...options };
         if (config.maxFileSize !== Infinity) {
@@ -157,6 +108,7 @@ class FileUpload {
         }
         return config;
     }
+
     _createNativeAttr() {
         const { disabled, acceptedExtensions, multiple } = this.options;
 
@@ -170,6 +122,7 @@ class FileUpload {
             this._element.setAttribute('multiple', multiple);
         }
     }
+
     _createDropZone() {
         this._createBasicContainer();
         if (this.options.defaultFile) {
@@ -178,7 +131,7 @@ class FileUpload {
     }
 
     _createBasicContainer() {
-    
+
         const existingFileUpload = document.querySelector('.file-upload', this._fileUploadWrapper);
         if (existingFileUpload) {
             this._fileUploadWrapper.removeChild(existingFileUpload);
@@ -238,12 +191,14 @@ class FileUpload {
 
         return errorsContainer;
     }
+
     _createFileUploadMask() {
         const fileUploadMask = document.createElement('div');
         fileUploadMask.className = 'file-upload-mask';
 
         return fileUploadMask;
     }
+
     _createPreviews() {
         const fileUploadPreviews = document.createElement('div');
         fileUploadPreviews.className = 'file-upload-previews';
@@ -268,6 +223,7 @@ class FileUpload {
 
         return fileUploadPreviews;
     }
+
     _createDefaultFilePreview() {
         const fileUploadPreviews = document.querySelector('.file-upload-previews', this._fileUploadWrapper);
         const fileUpload = document.querySelector('.file-upload', this._fileUploadWrapper);
@@ -292,6 +248,7 @@ class FileUpload {
 
         const fileNameContainer = document.createElement('p');
         fileNameContainer.className = 'file-upload-file-name';
+
         const fileInfo = this.options.defaultFile.split('/');
         const fileName = fileInfo[fileInfo.length - 1];
         const fileType = fileName.split('.')[fileName.split('.').length - 1];
@@ -364,7 +321,7 @@ class FileUpload {
                 detail: { files: this._files },
                 bubbles: true, // Set bubbles to true for event propagation
             });
-            
+
             this._element?.dispatchEvent(event);
         }
         this._createPreview();
@@ -565,7 +522,7 @@ class FileUpload {
                 files: this._files,
                 removedFile: file,
             },
-           // bubbles: true, // Set bubbles to true for event propagation
+            // bubbles: true, // Set bubbles to true for event propagation
         });
         this._element.dispatchEvent(event);
     }
@@ -573,33 +530,6 @@ class FileUpload {
     static getInstance(element) {
         return element.dataset[DATA_KEY]; // Access data attribute directly
     }
-    //static jQueryInterface(config, options) {
-    //    const fileUploadElements = this; // Assuming 'this' refers to a collection of elements
-
-    //    fileUploadElements.forEach(element => {
-
-    //        let data = element.dataset[DATA_KEY];
-    //        const _config = typeof config === 'object' && config;
-
-    //        if (!data && /dispose/.test(config)) {
-    //            return; // No action for dispose without existing instance
-    //        }
-
-    //        if (!data) {
-    //            data = new FileUpload(element, _config);
-    //            element.dataset[DATA_KEY] = data; // Store instance on element
-    //        }
-
-    //        if (typeof config === 'string') {
-    //            if (typeof data[config] === 'undefined') {
-    //                throw new TypeError(`No method named "${config}" on FileUpload instance`);
-    //            }
-    //            data[config](options);
-    //        }
-    //    });
-
-    //    return fileUploadElements; // Return the original element collection for chaining
-    //}
 
 }
 

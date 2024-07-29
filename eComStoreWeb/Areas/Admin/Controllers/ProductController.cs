@@ -57,35 +57,47 @@ namespace eComStore.Web.Areas.Admin.Controllers
                 return View(productVM);
             }
         }
+
         [Microsoft.AspNetCore.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(ProductViewModel obj, IFormFile? file)
+        public IActionResult Upsert(ProductViewModel obj, List<IFormFile>? files)
         {
             if (ModelState.IsValid)
             {
                 string rootPath = _hostEnvironment.WebRootPath;
-                if (file != null)
+                if (files != null || files?.Count != 0)
                 {
-                    string fileName = Guid.NewGuid().ToString();
-                    var uploads = Path.Combine(rootPath, @"images\products");
-                    var extension = Path.GetExtension(file.FileName);
-
                     if (obj.Product.ImageUrl != null)
                     {
-                        var oldImage = Path.Combine(rootPath, obj.Product.ImageUrl.TrimStart('\\'));
-                        if (System.IO.File.Exists(oldImage))
+                        var imageList = obj.Product.ImageUrl.Split(',').SkipLast(1);
+                        if (files.Count() + imageList.Count() >= 10)
                         {
-                            System.IO.File.Delete(oldImage);
+
+                            TempData["error"] = "No more than 10 images per product be added. Please remove extra images.";
+                            return View(obj);
                         }
+                        foreach (var url in imageList)
+                        {
+                            var oldImage = Path.Combine(rootPath, obj.Product.ImageUrl.TrimStart('\\'));
+                            if (System.IO.File.Exists(oldImage))
+                            {
+                                System.IO.File.Delete(oldImage);
+                            }
+                        }
+
                     }
 
-                    using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+                    var uploads = Path.Combine(rootPath, @"images\products");
+                    foreach (var file in files)
                     {
-                
-                        file.CopyTo(fileStreams);
+                        string fileName = Guid.NewGuid().ToString();
+                        var extension = Path.GetExtension(file.FileName);
+                        using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+                        {
+                            file.CopyTo(fileStreams);
+                        }
+                        obj.Product.ImageUrl += @"\images\products\" + fileName + extension + ",";
                     }
-                    obj.Product.ImageUrl = @"\images\products\" + fileName + extension;
-
                 }
 
                 if (obj.Product.Id == 0)
@@ -104,6 +116,28 @@ namespace eComStore.Web.Areas.Admin.Controllers
             return View(obj);
         }
 
+        public IActionResult RemoveImage(int id, string imageUrl)
+        {
+            var obj = _db.Product.GetFirstOrDefault(x => x.Id == id);
+            var images = obj.ImageUrl.Split(',').SkipLast(1).Where(img => img != imageUrl).ToList();
+
+            string rootPath = _hostEnvironment.WebRootPath;
+            var oldImage = Path.Combine(rootPath, imageUrl.TrimStart('\\'));
+            if (System.IO.File.Exists(oldImage))
+            {
+                System.IO.File.Delete(oldImage);
+            }
+
+            obj.ImageUrl = "";
+            foreach (var img in images)
+            {
+                obj.ImageUrl += img + ",";
+            }
+
+            _db.Product.Update(obj);
+            _db.Save();
+            return RedirectToAction("Upsert", new { id = id });
+        }
         #region API Calls
         [HttpGet]
         public IActionResult GetAll()
@@ -133,6 +167,8 @@ namespace eComStore.Web.Areas.Admin.Controllers
 
             return Json(new { success = true, message = "Delete successful" });
         }
+
         #endregion
+
     }
 }
