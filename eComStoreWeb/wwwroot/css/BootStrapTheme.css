@@ -295,7 +295,8 @@ figure {
 }
 
 img, svg {
-    vertical-align: middle
+    vertical-align: middle;
+        max-height: 400px;
 }
 
 table {
@@ -6219,8 +6220,8 @@ textarea.form-control-lg {
 
 .carousel-inner {
     position: relative;
-    width: 100%;
-    overflow: hidden
+    width:100%;
+    overflow: hidden;
 }
 
     .carousel-inner::after {
