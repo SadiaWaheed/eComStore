@@ -12,7 +12,7 @@
 
             <div class="col-12 col-lg-4 order-0">
 
-                <div class="row ">
+                <div class="row">
                     <div class="col-3 col-sm-0"></div>
                     <div class="col-6 col-sm-12">
                         <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
@@ -68,56 +68,26 @@
 
             </div>
             <div class="col-12 col-lg-8 order-1">
-                <div>
-                    <h1 class="text-dark">@Model.Product.Title</h1>
-                    <p class="text-warning">by @Model.Product.Author</p>
-                </div>
                 <div class="row">
-                    <div class="col-12 col-md-6 text-start">
-                        <span class="badge bg-info pt-2" style="height:30px;">@Model.Product.CoverType.Name</span>
-                        <span class="badge bg-warning pt-2" style="height:30px;">@Model.Product.Category.Name</span>
-                    </div>
+                    <h3 class="text-warning">@Model.Product.Category.Name</h3>
+                    <h1 class="text-dark">@Model.Product.Title</h1>
                 </div>
                 <div class="row">
                     <div class="col-12 col-lg-12 pt-2">
-                        <div class="row ">
-                            <h5 class="text-muted">ISBN : @Model.Product.ISBN</h5>
-                        </div>
                         <div class="row">
-                            <h5 class="text-muted pb-2">List Price: <strike>@Model.Product.ListPrice</strike></h5>
-                        </div>
-                        <div class="row text-center">
-                            <div class="p-1 col-2 bg-secondary border-bottom">
-                                <div>Quantity</div>
-                            </div>
-                            <div class="p-1 col-2 bg-secondary border-bottom">
-                                <div>1-50</div>
-                            </div>
-                            <div class="p-1 col-2 bg-secondary border-bottom">
-                                <div>51-100</div>
-                            </div>
-                            <div class="p-1 col-2 bg-secondary border-bottom">
-                                <div>100+</div>
-                            </div>
-                        </div>
-                        <div class="row text-center" style="color:maroon; font-weight:bold">
-                            <div class="p-1 col-2 bg-secondary">
-                                <div>Price</div>
-                            </div>
-                            <div class="p-1 col-2 bg-secondary">
-                                <div>@Model.Product.Price</div>
-                            </div>
-                            <div class="p-1 col-2 bg-secondary">
-                                <div>@Model.Product.Price50</div>
-                            </div>
-                            <div class="p-1 col-2 bg-secondary">
-                                <div>@Model.Product.Price100</div>
-                            </div>
-                        </div>
-                        <div class="row">
+                            <h3>
+                                <span>SAR</span>
+                                <span><b>@Model.Product.Price.ToString("0.00")</b></span>
+                            </h3>
+                            <h5>
+                                <span><strike>@Model.Product.ListPrice.ToString("0.00")</strike></span>
+                                <span>@Model.Product.ListPrice.ToString("00")%</span>
+                            </h5>
+                        </div>                        
+                        <div class="row pt-3">
+                            <h4>Description</h4>
                             <p class="text-secondary">@Html.Raw(Model.Product.Description)</p>
                         </div>
-
                     </div>
                 </div>
             </div>
