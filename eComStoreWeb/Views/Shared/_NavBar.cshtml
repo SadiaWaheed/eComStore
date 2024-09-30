@@ -13,7 +13,13 @@
                 <li class="nav-item">
                     <a class="nav-link text-light" asp-area="User" asp-controller="Home" asp-action="Index">Home  <span class="visually-hidden">(current)</span></a>
                 </li>
-                @if (User.IsInRole(SD.Role_Admin))
+                @if(User.IsInRole(SD.Role_Admin))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-light" asp-area="Admin" asp-controller="Home" asp-action="Index">Settings</a>
+                    </li>
+                }
+                @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
                 {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Manage</a>
