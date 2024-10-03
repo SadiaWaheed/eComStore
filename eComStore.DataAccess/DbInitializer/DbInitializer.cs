@@ -42,15 +42,15 @@ namespace eComStore.DataAccess.DbInitializer
             if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
             {
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(SD.Role_SuperAdmin)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_User_Indi)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_User_Comp)).GetAwaiter().GetResult();
 
                 //if roles not created. then create admin user as well
                 _userManager.CreateAsync(new ApplicationUser
                 { 
-                    UserName = "admin@ecomstore.com",
-                    Email = "admin@ecomstore.com",
+                    UserName = "superadmin@ecomstore.com",
+                    Email = "superadmin@ecomstore.com",
                     Name="Sadia Waheed",
                     PhoneNumber="090078601",
                     StreetAddress = "b12 renegade ave",
@@ -59,7 +59,7 @@ namespace eComStore.DataAccess.DbInitializer
                     City="Chicago"                
                 },"Abcd@1234");
 
-                ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(i => i.Email == "admin@ecomstore.com");
+                ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(i => i.Email == "superadmin@ecomstore.com");
 
                 _userManager.AddToRoleAsync(user, SD.Role_Admin).GetAwaiter().GetResult();
             }

@@ -13,13 +13,18 @@
                 <li class="nav-item">
                     <a class="nav-link text-light" asp-area="User" asp-controller="Home" asp-action="Index">Home  <span class="visually-hidden">(current)</span></a>
                 </li>
-                @if(User.IsInRole(SD.Role_Admin))
+                @if(User.IsInRole(SD.Role_SuperAdmin))
                 {
-                    <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="Admin" asp-controller="Home" asp-action="Index">Settings</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Settings</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="Company" asp-action="Index">Company</a>
+                            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Create User</a>
+                            <a class="dropdown-item" asp-area="SuperAdmin" asp-controller="Settings" asp-action="Index">Settings</a>
+                        </div>
                     </li>
                 }
-                @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
+                @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_SuperAdmin))
                 {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Manage</a>
@@ -30,10 +35,6 @@
                             <a class="dropdown-item" asp-area="Admin" asp-controller="Genre" asp-action="Index">Genre</a>
                             <a class="dropdown-item" asp-area="Admin" asp-controller="CoverType" asp-action="Index">Cover Type</a>
                             <a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">Product</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" asp-area="Admin" asp-controller="Company" asp-action="Index">Company</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Create User</a>
                         </div>
                     </li>
                 }

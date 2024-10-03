@@ -103,7 +103,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
             return View(orderHeaderId);
         }
         [HttpPost]
-        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_SuperAdmin)]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateOrderDetails()
         {
@@ -126,7 +126,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
             return RedirectToAction("Details", new { orderId = objFromDb.Id });
         }
         [HttpPost]
-        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_SuperAdmin)]
         [ValidateAntiForgeryToken]
         public IActionResult StartProcessing()
         {
@@ -138,7 +138,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_SuperAdmin)]
         [ValidateAntiForgeryToken]
         public IActionResult ShipOrder()
         {
@@ -157,7 +157,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
             return RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id });
         }
         [HttpPost]
-        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_SuperAdmin)]
         [ValidateAntiForgeryToken]
         public IActionResult CancelOrder()
         {
@@ -198,7 +198,7 @@ namespace eComStore.Web.Areas.Admin.Controllers
         public IActionResult GetAll(string status)
         {
             IEnumerable<OrderHeader> orderHeaders;
-            if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
+            if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_SuperAdmin))
             {
                 orderHeaders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser");
             }

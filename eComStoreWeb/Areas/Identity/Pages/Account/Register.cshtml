@@ -66,7 +66,7 @@ else
                 <label asp-for="Input.ConfirmPassword"></label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-            @if (User.IsInRole(SD.Role_Admin))
+            @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_SuperAdmin))
             {
                 <div class="form-floating py-2 col-6">
                     <select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-select">
@@ -82,7 +82,7 @@ else
             <button id="registerSubmit" type="submit" class="w-100 btn btn-primary">Register</button>
         </form>
     </div>
-    @if (!User.IsInRole(SD.Role_Admin))
+    @if (!(User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_SuperAdmin)))
     {
         <div class="col-md-6">
             <section>
