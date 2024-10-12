@@ -12,6 +12,7 @@
         IOrderDetailRepository OrderDetail { get; }
         IWishListRepository WishList { get; }
         IGenreRepository Genre { get; }
+        IConfigurationRepository Configuration { get; }
         void Save();
     }
 }

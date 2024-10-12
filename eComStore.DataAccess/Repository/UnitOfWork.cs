@@ -19,6 +19,7 @@ namespace eComStore.DataAccess.Repository
             OrderDetail = new OrderDetailRepository(_db);
             WishList = new WishListRepository(_db);
             Genre = new GenreRepository(_db);
+            Configuration = new ConfigurationRepository(_db);
         }
         public ICategoryRepository Category { get; private set;}
         public ICoverTypeRepository CoverType { get; private set; }
@@ -30,6 +31,7 @@ namespace eComStore.DataAccess.Repository
         public IOrderDetailRepository OrderDetail { get; private set; }
         public IWishListRepository WishList { get; private set; }
         public IGenreRepository Genre { get; private set; }
+        public IConfigurationRepository Configuration { get; private set; }
         public void Save()
         {
             _db.SaveChanges();
