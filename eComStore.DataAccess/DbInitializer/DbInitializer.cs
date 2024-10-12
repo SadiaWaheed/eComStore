@@ -11,7 +11,7 @@ namespace eComStore.DataAccess.DbInitializer
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _db;
-
+        
         public DbInitializer(
             UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager,
@@ -48,16 +48,16 @@ namespace eComStore.DataAccess.DbInitializer
 
                 //if roles not created. then create admin user as well
                 _userManager.CreateAsync(new ApplicationUser
-                { 
+                {
                     UserName = "superadmin@ecomstore.com",
                     Email = "superadmin@ecomstore.com",
-                    Name="Sadia Waheed",
-                    PhoneNumber="090078601",
+                    Name = "Sadia Waheed",
+                    PhoneNumber = "090078601",
                     StreetAddress = "b12 renegade ave",
                     State = "IL",
-                    PostalCode="12312",
-                    City="Chicago"                
-                },"Abcd@1234");
+                    PostalCode = "12312",
+                    City = "Chicago"
+                }, "Abcd@1234");
 
                 ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(i => i.Email == "superadmin@ecomstore.com");
 

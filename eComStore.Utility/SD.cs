@@ -21,5 +21,12 @@
         public const string PaymentStatusPaid = "paid";
 
         public const string SessionCart = "SessionShoppingCart";
+
+        public const string ConfigType_Site = "Site";
+        public const string ConfigType_SocialLink = "Social Links";
+        public const string ConfigType_Logo = "Logo";
+        public const string ConfigType_Other = "Other";
+        public const string ConfigType_Slider = "Slider";
+
     }
 }

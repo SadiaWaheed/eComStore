@@ -20,5 +20,7 @@ namespace eComStore.DataAccess.Data
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<WishList> WishList { get; set; }
         public DbSet<Genre> Genre { get; set; }
+        public DbSet<ConfigurationType> ConfigurationType { get; set; }
+        public DbSet<Configurations> Configurations { get; set; }
     }
 }
